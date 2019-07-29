@@ -16,7 +16,7 @@ func performRequest(r http.Handler, method, path string) *httptest.ResponseRecor
 	r.ServeHTTP(w, req)
 	return w
 }
-func testGetPage(t *testing.T) {
+func TestGetPage(t *testing.T) {
 	// Build our expected body
 	body := gin.H{
 		"Title":   "test title",
@@ -34,9 +34,9 @@ func testGetPage(t *testing.T) {
 	var response map[string]string
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
 	// Grab the value & whether or not it exists
-	value, exists := response["hello"]
+	value, exists := response["Title"]
 	// Make some assertions on the correctness of the response.
 	assert.Nil(t, err)
 	assert.True(t, exists)
-	assert.Equal(t, body["hello"], value)
+	assert.Equal(t, body["Title"], value)
 }
