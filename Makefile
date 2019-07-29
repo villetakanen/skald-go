@@ -11,3 +11,12 @@ test:
 
 build: clean
 	CGO_ENABLED=0 go build -v -a -installsuffix cgo -o cmd/skald service/*
+
+serve:
+	cd cmd && ./skald &
+
+restart: 
+	pkill skald && cd cmd && ./skald &
+
+kill:
+	pkill skald
