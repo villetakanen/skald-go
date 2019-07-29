@@ -4,45 +4,43 @@ import (
 	"fmt"
 
 	// "cloud.google.com/go/firestore"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-type BookMetaData struct {
-	Title   string `json:"title"`
-	Creator string `json:"creator"`
+type WikiPage struct {
+	Title   string `json:"Title"`
+	Creator string `json:"Creator"`
+	Content string `json:"Content"`
+}
+
+func SetupRouter() *gin.Engine {
+	r := gin.Default()
+	r.GET("/page", getPage)
+	//route.PUT("/book", createBook)
+	return r
+
 }
 
 func main() {
-	route := gin.Default()
-	route.PUT("/book", createBook)
-	route.Run()
+	r := SetupRouter()
+	r.Run()
 }
 
-func createBook(c *gin.Context) {
+/**
+ * Returns a wikipage with metadata
+ *
+ * TODO: add MVP implementation
+ * TODO: add pageProvider (local files, firestore, etc)
+ */
+func getPage(c *gin.Context) {
+	fmt.Println("getPage")
 
-	/*/create a firestore client
-	ctx := context.Background()
-	client, err := firestore.NewClient(ctx, "adaptivestoryengine")
-	if err != nil {
-		c.AbortWithError(400, err)
-		fmt.Printf("something happened on firestore.NewClient")
-		fmt.Println(err)
-		return
-	}
-	test := client.Doc("books/test")
-	fmt.Println(test) */
+	demopage := new(WikiPage)
+	demopage.Title = "test title"
+	demopage.Creator = "test creator"
+	demopage.Content = "test content"
 
-	data := new(BookMetaData)
-
-	errJ := c.BindJSON(data)
-	if errJ != nil {
-		fmt.Printf("something happened on c.BindJSON \n")
-		fmt.Println(errJ)
-		c.AbortWithError(400, errJ)
-		return
-	}
-
-	c.String(200, fmt.Sprintf("%#v", data))
-
+	c.JSON(http.StatusOK, demopage)
 }

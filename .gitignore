@@ -13,3 +13,6 @@
 
 # VSCode workspace files
 *.code-workspace
+
+# binaries
+cmd
