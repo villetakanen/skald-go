@@ -19,6 +19,7 @@ type WikiPage struct {
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 	r.GET("/page/:id", getPage)
+	r.PUT("/page/:id", putPage)
 	//route.PUT("/book", createBook)
 	return r
 
@@ -45,13 +46,35 @@ func getPage(c *gin.Context) {
 	// if firestore
 	// TODO: add firestore
 
-	//demopage := new(WikiPage)
-	//demopage.Title = "test title"
-	//demopage.Creator = "test creator"
-	//demopage.Content = "test content"
-
 	c.JSON(http.StatusOK, r)
 }
+
+/**
+ * Creates a wikipage from the PUT request
+ *
+ * TODO, just saves the payload for now, no sanity or even checks!
+ * TODO, returns the page from disk after save, good for dev, pretty slow for prod
+ */
+func putPage(c *gin.Context) {
+
+	p := new(WikiPage)
+
+	err := c.BindJSON(p)
+	if err != nil {
+		fmt.Printf("something happened on c.BindJSON \n")
+		fmt.Println(err)
+		c.AbortWithError(400, err)
+		return
+	}
+
+	putFilestoreDoc(c.Param("id"), p)
+
+	getPage(c)
+}
+func putFilestoreDoc(name string, p *WikiPage) {
+
+}
+
 func getFilestoreDoc(name string) *WikiPage {
 	meta, content := GetDoc(name)
 	p := new(WikiPage)
