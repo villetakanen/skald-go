@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	// "cloud.google.com/go/firestore"
+	"encoding/json"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,7 +18,7 @@ type WikiPage struct {
 
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
-	r.GET("/page", getPage)
+	r.GET("/page/:id", getPage)
 	//route.PUT("/book", createBook)
 	return r
 
@@ -37,10 +38,27 @@ func main() {
 func getPage(c *gin.Context) {
 	fmt.Println("getPage")
 
-	demopage := new(WikiPage)
-	demopage.Title = "test title"
-	demopage.Creator = "test creator"
-	demopage.Content = "test content"
+	// TODO: check mode
+	// if local
+	r := getFilestoreDoc(c.Param("id"))
 
-	c.JSON(http.StatusOK, demopage)
+	// if firestore
+	// TODO: add firestore
+
+	//demopage := new(WikiPage)
+	//demopage.Title = "test title"
+	//demopage.Creator = "test creator"
+	//demopage.Content = "test content"
+
+	c.JSON(http.StatusOK, r)
+}
+func getFilestoreDoc(name string) *WikiPage {
+	meta, content := GetDoc(name)
+	p := new(WikiPage)
+
+	json.Unmarshal([]byte(meta), &p)
+
+	p.Content = content
+
+	return p
 }

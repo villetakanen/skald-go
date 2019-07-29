@@ -19,14 +19,12 @@ func performRequest(r http.Handler, method, path string) *httptest.ResponseRecor
 func TestGetPage(t *testing.T) {
 	// Build our expected body
 	body := gin.H{
-		"Title":   "test title",
-		"Creator": "test creator",
-		"Content": "test content",
+		"Title": "Home",
 	}
 	// Grab our router
 	router := SetupRouter()
 	// Perform a GET request with that handler.
-	w := performRequest(router, "GET", "/page")
+	w := performRequest(router, "GET", "/page/index")
 	// Assert we encoded correctly,
 	// the request gives a 200
 	assert.Equal(t, http.StatusOK, w.Code)
