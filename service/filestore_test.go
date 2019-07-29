@@ -2,13 +2,12 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math/rand"
 	"os"
+	"reflect"
 	"strconv"
 	"testing"
-
 	"time"
 
 	"github.com/stretchr/testify/assert"
@@ -45,6 +44,35 @@ func TestPutFile(t *testing.T) {
 	deleteFile(vn + ".md")
 
 }
+func TestPutGetFile(t *testing.T) {
+
+	rand.Seed(time.Now().UTC().UnixNano())
+
+	salt := strconv.Itoa(rand.Int())
+
+	w := new(WikiPage)
+	w.Title = "test title " + salt
+	w.Creator = "creator " + salt
+	w.Content = "# some content \n\nand more\n"
+
+	n := "eq_test_doc_" + salt
+	vn := pagepath + n + pathend
+
+	fmt.Println(n)
+
+	//add the doc to the folder
+	PutDoc(n, w)
+	vw := GetDoc(n)
+
+	//Check the files exist
+	assert.True(t, reflect.DeepEqual(w, vw))
+	//assert.Equal(t, vmd, w.Content)
+
+	//Lets delete the files we created
+	deleteFile(vn + ".json")
+	deleteFile(vn + ".md")
+
+}
 func fileExists(d string) bool {
 	info, err := os.Stat(d)
 	if os.IsNotExist(err) {
@@ -57,52 +85,7 @@ func deleteFile(n string) {
 	// delete file
 	var err = os.Remove(n)
 	if err != nil {
+		log.Fatal(err)
 		return
 	}
-
-	fmt.Println("==> done deleting file")
-}
-
-func TestGetDefaultDoc(t *testing.T) {
-	// Grab the files
-	vjsonf, err := os.Open("../assets/default/index_skald.json")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer vjsonf.Close()
-
-	vmdf, err := os.Open("../assets/default/index_skald.md")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer vmdf.Close()
-
-	vjson, _ := ioutil.ReadAll(vjsonf)
-	vmd, _ := ioutil.ReadAll(vmdf)
-	tjson, tmd := GetDoc("index")
-
-	assert.Equal(t, string(vjson), tjson)
-	assert.Equal(t, string(vmd), tmd)
-}
-
-func TestGetUpdatedDoc(t *testing.T) {
-	// Grab the files
-	vjsonf, err := os.Open("../assets/pages/1_skald.json")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer vjsonf.Close()
-
-	vmdf, err := os.Open("../assets/pages/1_skald.md")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer vmdf.Close()
-
-	vjson, _ := ioutil.ReadAll(vjsonf)
-	vmd, _ := ioutil.ReadAll(vmdf)
-	tjson, tmd := GetDoc("1")
-
-	assert.Equal(t, string(vjson), tjson)
-	assert.Equal(t, string(vmd), tmd)
 }

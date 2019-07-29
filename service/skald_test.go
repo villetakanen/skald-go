@@ -21,6 +21,7 @@ func TestGetPage(t *testing.T) {
 	body := gin.H{
 		"Title": "Home",
 	}
+
 	// Grab our router
 	router := SetupRouter()
 	// Perform a GET request with that handler.

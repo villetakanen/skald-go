@@ -4,7 +4,8 @@ import (
 	"fmt"
 
 	// "cloud.google.com/go/firestore"
-	"encoding/json"
+
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -57,6 +58,7 @@ func getPage(c *gin.Context) {
  */
 func putPage(c *gin.Context) {
 
+	log.Print("putPage")
 	p := new(WikiPage)
 
 	err := c.BindJSON(p)
@@ -72,16 +74,9 @@ func putPage(c *gin.Context) {
 	getPage(c)
 }
 func putFilestoreDoc(name string, p *WikiPage) {
-
+	PutDoc(name, p)
 }
 
 func getFilestoreDoc(name string) *WikiPage {
-	meta, content := GetDoc(name)
-	p := new(WikiPage)
-
-	json.Unmarshal([]byte(meta), &p)
-
-	p.Content = content
-
-	return p
+	return GetDoc(name)
 }

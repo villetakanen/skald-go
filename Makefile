@@ -7,7 +7,7 @@ clean:
 	rm -rf cmd
 
 test: 
-	go test src
+	go test github.com/vitku/skald/... 
 
 build: clean
 	CGO_ENABLED=0 go build -v -a -installsuffix cgo -o cmd/skald service/*

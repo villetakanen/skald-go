@@ -12,7 +12,7 @@ type WikiPageMeta struct {
 	Creator string `json:"Creator"`
 }
 
-func GetDoc(d string) (string, string) {
+func GetDoc(d string) *WikiPage {
 	d = d + "_skald"
 	meta := ""
 	md := ""
@@ -24,7 +24,14 @@ func GetDoc(d string) (string, string) {
 		meta = getFile("../assets/default/" + d + ".json")
 		md = getFile("../assets/default/" + d + ".md")
 	}
-	return meta, md
+
+	p := new(WikiPage)
+
+	json.Unmarshal([]byte(meta), &p)
+
+	p.Content = md
+
+	return p
 }
 
 func PutDoc(n string, w *WikiPage) {
